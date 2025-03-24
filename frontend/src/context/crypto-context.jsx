@@ -43,7 +43,6 @@ export function CryptoProvider({ children }) {
 
 	function addAsset(newAsset) {
 		setAssets((prev) => mapAssets([...prev, newAsset], crypto))
-		console.log('newasset')
 	}
 
 	return (

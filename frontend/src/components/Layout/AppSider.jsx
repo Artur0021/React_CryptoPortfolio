@@ -11,9 +11,21 @@ const siderStyle = {
 export default function AppSider() {
 	const { assets } = useContext(CryptoContext)
 
+	const mergedAssets = assets.reduce((acc, asset) => {
+		const existingAsset = acc.find((item) => item.id === asset.id)
+		if (existingAsset) {
+			existingAsset.amount += asset.amount
+			existingAsset.totalAmount += asset.totalAmount
+			existingAsset.totalProfit += asset.totalProfit
+		} else {
+			acc.push({ ...asset })
+		}
+		return acc
+	}, [])
+
 	return (
 		<Layout.Sider width='25%' style={siderStyle}>
-			{assets.map((asset) => (
+			{mergedAssets.map((asset) => (
 				<Card key={asset.id} style={{ marginBottom: '1rem' }}>
 					<Statistic
 						title={capitalize(asset.id)}
@@ -34,7 +46,6 @@ export default function AppSider() {
 								withTag: true,
 							},
 							{ title: 'Asset Amount', value: asset.amount, isPlain: true },
-							// { title: 'Difference', value: asset.growPercent },
 						]}
 						renderItem={(item) => (
 							<List.Item>

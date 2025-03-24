@@ -8,12 +8,23 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 export default function PortfolioChart() {
 	const { assets } = useContext(CryptoContext)
 
+	// Объединяем дублирующиеся активы
+	const mergedAssets = assets.reduce((acc, asset) => {
+		const existingAsset = acc.find((item) => item.id === asset.id)
+		if (existingAsset) {
+			existingAsset.totalAmount += asset.totalAmount // Суммируем общую стоимость актива
+		} else {
+			acc.push({ ...asset }) // Добавляем новый актив
+		}
+		return acc
+	}, [])
+
 	const data = {
-		labels: assets.map((c) => c.name),
+		labels: mergedAssets.map((c) => c.name),
 		datasets: [
 			{
 				label: '$',
-				data: assets.map((c) => c.totalAmount),
+				data: mergedAssets.map((c) => c.totalAmount),
 				backgroundColor: [
 					'rgba(255, 99, 132, 1)',
 					'rgba(54, 162, 235, 1)',
@@ -25,6 +36,7 @@ export default function PortfolioChart() {
 			},
 		],
 	}
+
 	return (
 		<div
 			style={{

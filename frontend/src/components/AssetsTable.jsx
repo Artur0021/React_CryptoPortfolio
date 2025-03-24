@@ -1,6 +1,7 @@
 import { Table } from 'antd'
 import { useContext } from 'react'
 import CryptoContext from '../context/crypto-context'
+
 const columns = [
 	{
 		title: 'Name',
@@ -8,7 +9,7 @@ const columns = [
 		showSorterTooltip: {
 			target: 'full-header',
 		},
-		sorter: (a, b) => a.name.length - b.name.length,
+		sorter: (a, b) => a.name.localeCompare(b.name),
 		sortDirections: ['descend'],
 	},
 	{
@@ -28,7 +29,17 @@ const columns = [
 export default function AssetsTable() {
 	const { assets } = useContext(CryptoContext)
 
-	const data = assets.map((c) => ({
+	const mergedAssets = assets.reduce((acc, asset) => {
+		const existingAsset = acc.find((item) => item.id === asset.id)
+		if (existingAsset) {
+			existingAsset.amount += asset.amount
+		} else {
+			acc.push({ ...asset })
+		}
+		return acc
+	}, [])
+
+	const data = mergedAssets.map((c) => ({
 		key: c.id,
 		name: c.name,
 		price: c.price,
