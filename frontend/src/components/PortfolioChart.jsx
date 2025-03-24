@@ -8,13 +8,12 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 export default function PortfolioChart() {
 	const { assets } = useContext(CryptoContext)
 
-	// Объединяем дублирующиеся активы
 	const mergedAssets = assets.reduce((acc, asset) => {
 		const existingAsset = acc.find((item) => item.id === asset.id)
 		if (existingAsset) {
-			existingAsset.totalAmount += asset.totalAmount // Суммируем общую стоимость актива
+			existingAsset.totalAmount += asset.totalAmount
 		} else {
-			acc.push({ ...asset }) // Добавляем новый актив
+			acc.push({ ...asset })
 		}
 		return acc
 	}, [])
