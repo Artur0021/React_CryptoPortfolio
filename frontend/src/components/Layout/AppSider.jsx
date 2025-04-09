@@ -1,15 +1,27 @@
-import { Layout, Card, Statistic, List, Typography, Tag } from 'antd'
-import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
+import { Card, Statistic, List, Typography, Tag, Button, Layout } from 'antd'
+import {
+	ArrowDownOutlined,
+	ArrowUpOutlined,
+	MenuOutlined,
+} from '@ant-design/icons'
 import { capitalize } from '../../utils'
-import { useContext } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import CryptoContext from '../../context/crypto-context'
-
-const siderStyle = {
-	padding: '1rem',
-}
+import './AppSider.css'
 
 export default function AppSider() {
 	const { assets } = useContext(CryptoContext)
+	const [isMobile, setIsMobile] = useState(false)
+	const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth <= 768)
+		}
+		handleResize()
+		window.addEventListener('resize', handleResize)
+		return () => window.removeEventListener('resize', handleResize)
+	}, [])
 
 	const mergedAssets = assets.reduce((acc, asset) => {
 		const existingAsset = acc.find((item) => item.id === asset.id)
@@ -23,8 +35,8 @@ export default function AppSider() {
 		return acc
 	}, [])
 
-	return (
-		<Layout.Sider width='25%' style={siderStyle}>
+	const content = (
+		<div className='sider-content'>
 			{mergedAssets.map((asset) => (
 				<Card key={asset.id} style={{ marginBottom: '1rem' }}>
 					<Statistic
@@ -70,6 +82,39 @@ export default function AppSider() {
 					/>
 				</Card>
 			))}
+		</div>
+	)
+
+	if (isMobile) {
+		return (
+			<>
+				<Button
+					icon={<MenuOutlined />}
+					type='primary'
+					className='mobile-drawer-btn'
+					onClick={() => setIsDrawerOpen(true)}
+				>
+					Открыть портфель
+				</Button>
+				<div className={`custom-drawer ${isDrawerOpen ? 'open' : ''}`}>
+					<div className='drawer-header'>
+						<h3>Мой портфель</h3>
+						<Button danger onClick={() => setIsDrawerOpen(false)}>
+							Закрыть
+						</Button>
+					</div>
+					{content}
+				</div>
+				{isDrawerOpen && (
+					<div className='overlay' onClick={() => setIsDrawerOpen(false)} />
+				)}
+			</>
+		)
+	}
+
+	return (
+		<Layout.Sider width='25%' className='app-sider'>
+			{content}
 		</Layout.Sider>
 	)
 }
