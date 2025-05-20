@@ -94,7 +94,7 @@ export default function AppSider() {
 					className='mobile-drawer-btn'
 					onClick={() => setIsDrawerOpen(true)}
 				>
-					Открыть портфель
+					Open Portfolio
 				</Button>
 				<div className={`custom-drawer ${isDrawerOpen ? 'open' : ''}`}>
 					<div className='drawer-header'>
